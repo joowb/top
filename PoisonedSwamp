@@ -1,0 +1,55 @@
+public class PoisonedSwamp {
+    public String cross(String[] swamp) {
+        int height = swamp.length;
+        int width = swamp[0].length();
+        char[][] s = new char[height][];
+        for (int r = 0; r < height; r++) {
+            s[r] = swamp[r].toCharArray();
+        }
+        final int MAX_POISON = 10;
+        int qSize = height * width * MAX_POISON;
+        int[] qr = new int[qSize];
+        int[] qc = new int[qSize];
+        int[] qp = new int[qSize];
+        boolean[][][] was = new boolean[height][width][MAX_POISON];
+        int qt = 0;
+        int qh = 1;
+        was[0][0][0] = true;
+        final int[] dr = {-1, 0, 1, 0};
+        final int[] dc = {0, -1, 0, 1};
+        while (qt < qh) {
+            int r = qr[qt];
+            int c = qc[qt];
+            int p = qp[qt];
+            ++qt;
+            if (r == height - 1 && c == width - 1) {
+                return "possible";
+            }
+            for (int dir = 0; dir < 4; dir++) {
+                int nr = r + dr[dir];
+                int nc = c + dc[dir];
+                if (nr < 0 || nr >= height || nc < 0 || nc >= width) {
+                    continue;
+                }
+                if (s[nr][nc] == '#') {
+                    continue;
+                }
+                int np = p;
+                if (Character.isDigit(s[nr][nc])) {
+                    np += s[nr][nc] - '0';
+                }
+                if (s[nr][nc] == 'S') {
+                    np = 0;
+                }
+                if (np < MAX_POISON && !was[nr][nc][np]) {
+                    was[nr][nc][np] = true;
+                    qr[qh] = nr;
+                    qc[qh] = nc;
+                    qp[qh] = np;
+                    ++qh;
+                }
+            }
+        }
+        return "impossible";
+    }
+ }
